@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golf Bet Tracker</title>
+    <style>
+        :root {
+            --sky-blue: #87CEEB;
+            --grass-green: #76c74d;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to bottom, var(--sky-blue) 40%, var(--grass-green) 40%);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container { width: 100%; max-width: 400px; text-align: center; }
+
+        /* Player Display */
+        .player-row { display: flex; justify-content: space-around; margin-bottom: 25px; }
+        
+        .player-card { width: 45%; transition: transform 0.3s ease, filter 0.3s ease; position: relative; }
+        
+        .amount-bubble {
+            background: white;
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .avatar { width: 100%; border-radius: 15px; border: 4px solid white; display: block; }
+
+        /* Status Effects */
+        .winner { transform: scale(1.1); filter: drop-shadow(0 0 15px gold); z-index: 2; }
+        .loser { filter: grayscale(100%); opacity: 0.6; transform: scale(0.9); }
+
+        /* Form */
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        input, select, button {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px;
+            border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;
+        }
+
+        button { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; }
+
+        /* History */
+        .history { margin-top: 20px; text-align: left; background: rgba(255,255,255,0.9); padding: 15px; border-radius: 15px; }
+        .history-item { border-bottom: 1px solid #eee; padding: 8px 0; display: flex; justify-content: space-between; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="player-row">
+        <div id="brady-card" class="player-card">
+            <div id="brady-val" class="amount-bubble">$0</div>
+            <img src="brady.png" class="avatar">
+        </div>
+        <div id="evan-card" class="player-card">
+            <div id="evan-val" class="amount-bubble">$0</div>
+            <img src="evan.png" class="avatar">
+        </div>
+    </div>
+
+    <div class="card">
+        <input type="text" id="course" placeholder="Course Name">
+        <select id="winner">
+            <option value="brady">Brady Won</option>
+            <option value="evan">Evan Won</option>
+        </select>
+        <input type="number" id="amt" placeholder="Bet Amount ($)">
+        <button onclick="logRound()">LOG ROUND</button>
+    </div>
+
+    <div class="history" id="history-box">
+        <strong>History</strong>
+        <div id="history-list"></div>
+    </div>
+</div>
+
+<script>
+    let rounds = JSON.parse(localStorage.getItem('golfHistory')) || [];
+
+    function updateUI() {
+        let bradyNet = 0;
+        rounds.forEach(r => {
+            if(r.winner === 'brady') bradyNet += r.amount;
+            else bradyNet -= r.amount;
+        });
+
+        let evanNet = -bradyNet;
+
+        // Update Numbers
+        document.getElementById('brady-val').innerText = (bradyNet >= 0 ? '+$' : '-$') + Math.abs(bradyNet);
+        document.getElementById('evan-val').innerText = (evanNet >= 0 ? '+$' : '-$') + Math.abs(evanNet);
+
+        // Update Images (The one with more money stays in color)
+        document.getElementById('brady-card').className = bradyNet >= evanNet ? 'player-card winner' : 'player-card loser';
+        document.getElementById('evan-card').className = evanNet > bradyNet ? 'player-card winner' : 'player-card loser';
+
+        // Update History List
+        document.getElementById('history-list').innerHTML = rounds.map(r => `
+            <div class="history-item">
+                <span>${r.course}</span>
+                <span style="color:${r.winner === 'brady' ? 'green' : 'red'}">${r.winner.toUpperCase()} +$${r.amount}</span>
+            </div>
+        `).reverse().join('');
+    }
+
+    function logRound() {
+        const course = document.getElementById('course').value;
+        const winner = document.getElementById('winner').value;
+        const amount = parseInt(document.getElementById('amt').value);
+
+        if (!course || !amount) return alert("Fill out the course and amount!");
+
+        rounds.push({ course, winner, amount });
+        localStorage.setItem('golfHistory', JSON.stringify(rounds));
+        
+        updateUI();
+        document.getElementById('course').value = '';
+        document.getElementById('amt').value = '';
+    }
+
+    // Run on load
+    updateUI();
+</script>
+
+</body>
+</html>
