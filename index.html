@@ -4,59 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golf Bet Tracker</title>
-    <style>
-        :root {
-            --sky-blue: #87CEEB;
-            --grass-green: #76c74d;
-        }
+<style>
+    :root {
+        --sky-blue: #87CEEB;
+        --grass-green: #76c74d;
+        --fairway-dark: #5ea33d;
+    }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: linear-gradient(to bottom, var(--sky-blue) 40%, var(--grass-green) 40%);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            min-height: 100vh;
-        }
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        /* Improved Background: Added a gradient "horizon" feel */
+        background: linear-gradient(to bottom, 
+            var(--sky-blue) 0%, 
+            #b0e2ff 35%, 
+            var(--grass-green) 35%, 
+            var(--fairway-dark) 100%);
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        /* This "padding-top" brings the characters down from the notch */
+        padding: 60px 20px 20px 20px; 
+        min-height: 100vh;
+    }
 
-        .container { width: 100%; max-width: 400px; text-align: center; }
+    .container { width: 100%; max-width: 400px; text-align: center; }
 
-        /* Player Display */
-        .player-row { display: flex; justify-content: space-around; margin-bottom: 25px; }
-        
-        .player-card { width: 45%; transition: transform 0.3s ease, filter 0.3s ease; position: relative; }
-        
-        .amount-bubble {
-            background: white;
-            border-radius: 20px;
-            padding: 8px 15px;
-            font-weight: bold;
-            font-size: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            margin-bottom: 10px;
-        }
+    .player-row { 
+        display: flex; 
+        justify-content: space-around; 
+        margin-bottom: 30px;
+        /* Added a little breathing room between characters */
+        gap: 10px; 
+    }
+    
+    .player-card { 
+        width: 48%; 
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        position: relative; 
+    }
+    
+    .amount-bubble {
+        background: white;
+        border-radius: 50px; /* Rounder look */
+        padding: 10px 15px;
+        font-weight: 800;
+        font-size: 22px;
+        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+        margin-bottom: 15px;
+        border: 2px solid #eee;
+    }
 
-        .avatar { width: 100%; border-radius: 15px; border: 4px solid white; display: block; }
+    .avatar { 
+        width: 100%; 
+        border-radius: 20px; 
+        border: 5px solid white; 
+        display: block; 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
 
-        /* Status Effects */
-        .winner { transform: scale(1.1); filter: drop-shadow(0 0 15px gold); z-index: 2; }
-        .loser { filter: grayscale(100%); opacity: 0.6; transform: scale(0.9); }
+    /* Effects */
+    .winner { transform: scale(1.1); z-index: 2; }
+    .winner .avatar { border-color: gold; }
+    .loser { filter: grayscale(100%); opacity: 0.5; transform: scale(0.85); }
 
-        /* Form */
-        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        
-        input, select, button {
-            width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px;
-            border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;
-        }
+    /* Form Card */
+    .card { 
+        background: rgba(255, 255, 255, 0.95); 
+        padding: 25px; 
+        border-radius: 25px; 
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+        backdrop-filter: blur(5px);
+    }
+    
+    input, select, button {
+        width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
+        border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;
+        -webkit-appearance: none; /* Makes it look better on iPhone */
+    }
 
-        button { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; }
+    button { 
+        background: #27ae60; 
+        color: white; 
+        border: none; 
+        font-weight: 800; 
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
-        /* History */
-        .history { margin-top: 20px; text-align: left; background: rgba(255,255,255,0.9); padding: 15px; border-radius: 15px; }
-        .history-item { border-bottom: 1px solid #eee; padding: 8px 0; display: flex; justify-content: space-between; font-size: 14px; }
-    </style>
+    /* History List */
+    .history { 
+        margin-top: 25px; 
+        text-align: left; 
+        background: white; 
+        padding: 20px; 
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .history-item { 
+        border-bottom: 1px solid #f0f0f0; 
+        padding: 12px 0; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+    }
+    .history-item:last-child { border: none; }
+</style>
 </head>
 <body>
 
