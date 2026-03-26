@@ -6,34 +6,34 @@
     <title>Golf Bet Tracker</title>
     <style>
         :root {
-            --sky-blue: #87CEEB;
-            --grass-green: #76c74d;
-            --fairway-dark: #5ea33d;
+            --grass-green: #2ecc71;
+            --glass-white: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, 
-                var(--sky-blue) 0%, 
-                #b0e2ff 35%, 
-                var(--grass-green) 35%, 
-                var(--fairway-dark) 100%);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* Background uses your course.jpg with a dark overlay for readability */
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), 
+                        url('course.jpg') no-repeat center center fixed;
+            background-size: cover;
             margin: 0;
             display: flex;
             justify-content: center;
-            /* Extra padding at top to move images down from the phone notch */
-            padding: 80px 20px 40px 20px; 
+            /* Extra top padding (80px) to clear the iPhone notch/island */
+            padding: 80px 20px 60px 20px; 
             min-height: 100vh;
-            color: #333;
+            color: #222;
         }
 
-        .container { width: 100%; max-width: 400px; text-align: center; }
+        .container { width: 100%; max-width: 420px; text-align: center; }
 
+        /* Player Visualization */
         .player-row { 
             display: flex; 
             justify-content: space-around; 
             margin-bottom: 40px;
-            gap: 15px; 
+            gap: 10px; 
         }
         
         .player-card { 
@@ -45,12 +45,12 @@
         .amount-bubble {
             background: white;
             border-radius: 50px;
-            padding: 10px 5px;
+            padding: 12px 5px;
             font-weight: 900;
-            font-size: 24px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            font-size: 26px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             margin-bottom: 15px;
-            border: 2px solid #fff;
+            border: 3px solid var(--grass-green);
         }
 
         .avatar { 
@@ -58,58 +58,64 @@
             border-radius: 25px; 
             border: 6px solid white; 
             display: block; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            background: #eee;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+            background: rgba(255,255,255,0.2);
         }
 
-        /* Status Effects */
-        .winner { transform: scale(1.15); z-index: 2; }
-        .winner .avatar { border-color: #FFD700; }
-        .loser { filter: grayscale(100%); opacity: 0.4; transform: scale(0.85); }
+        /* Status Logic */
+        .winner { transform: scale(1.12); z-index: 5; }
+        .winner .avatar { border-color: #FFD700; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+        .loser { filter: grayscale(100%); opacity: 0.5; transform: scale(0.85); }
 
-        /* Input Form */
-        .card { 
-            background: rgba(255, 255, 255, 0.9); 
+        /* Glass Cards */
+        .glass-card { 
+            background: var(--glass-white); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 25px; 
             border-radius: 30px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            backdrop-filter: blur(10px);
-            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2); 
+            margin-bottom: 25px;
         }
         
         input, select, button {
             width: 100%; padding: 15px; margin: 10px 0; border-radius: 15px;
-            border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;
+            border: 1px solid #ccc; font-size: 16px; box-sizing: border-box;
             outline: none;
         }
 
         button { 
-            background: #2ecc71; 
+            background: #27ae60; 
             color: white; 
             border: none; 
             font-weight: 800; 
             cursor: pointer;
-            transition: transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s, transform 0.1s;
         }
-        button:active { transform: scale(0.98); }
+        button:active { transform: scale(0.96); }
+        button:disabled { background: #95a5a6; }
 
-        /* History */
-        .history { 
-            text-align: left; 
-            background: white; 
-            padding: 20px; 
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        /* History Table */
+        .history-list { text-align: left; }
+        .history-header { 
+            font-size: 18px; 
+            font-weight: 800; 
+            margin-bottom: 15px; 
+            display: block; 
+            border-bottom: 2px solid rgba(0,0,0,0.05);
+            padding-bottom: 5px;
         }
-        .history h3 { margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
         .history-item { 
-            border-bottom: 1px solid #f9f9f9; 
-            padding: 10px 0; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            padding: 12px 0; 
             display: flex; 
             justify-content: space-between; 
-            font-size: 15px;
+            align-items: center;
         }
-        .loading-text { font-style: italic; color: #666; font-size: 14px; }
+        .history-item b { font-size: 16px; }
     </style>
 </head>
 <body>
@@ -126,19 +132,19 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="glass-card">
         <input type="text" id="course" placeholder="What Course?">
         <select id="winner">
             <option value="brady">Brady Won</option>
             <option value="evan">Evan Won</option>
         </select>
-        <input type="number" id="amt" placeholder="Bet Amount ($)">
+        <input type="number" id="amt" placeholder="Amount ($)">
         <button id="logBtn" onclick="logRound()">LOG ROUND</button>
     </div>
 
-    <div class="history">
-        <h3>Season History</h3>
-        <div id="history-list"><span class="loading-text">Loading scores...</span></div>
+    <div class="glass-card history-list">
+        <span class="history-header">Season History</span>
+        <div id="history-content">Loading scores...</div>
     </div>
 </div>
 
@@ -152,8 +158,7 @@
             rounds = await response.json();
             updateUI();
         } catch (e) {
-            console.error("Error loading data", e);
-            document.getElementById('history-list').innerText = "Failed to load history.";
+            document.getElementById('history-content').innerText = "Data currently offline.";
         }
     }
 
@@ -167,16 +172,21 @@
 
         let evanNet = -bradyNet;
 
+        // Update Money Labels
         document.getElementById('brady-val').innerText = (bradyNet >= 0 ? '+$' : '-$') + Math.abs(bradyNet);
         document.getElementById('evan-val').innerText = (evanNet >= 0 ? '+$' : '-$') + Math.abs(evanNet);
 
+        // Update Winner Visuals (The player with the most net winnings gets the crown)
         document.getElementById('brady-card').className = bradyNet >= evanNet ? 'player-card winner' : 'player-card loser';
         document.getElementById('evan-card').className = evanNet > bradyNet ? 'player-card winner' : 'player-card loser';
 
-        document.getElementById('history-list').innerHTML = rounds.length ? rounds.map(r => `
+        // Render History
+        document.getElementById('history-content').innerHTML = rounds.length ? rounds.map(r => `
             <div class="history-item">
                 <span>${r.course}</span>
-                <b style="color:${r.winner.toLowerCase()==='brady'?'#27ae60':'#e74c3c'}">${r.winner.toUpperCase()} +$${r.amount}</b>
+                <b style="color:${r.winner.toLowerCase()==='brady'?'#27ae60':'#e74c3c'}">
+                    ${r.winner.toUpperCase()} +$${r.amount}
+                </b>
             </div>
         `).reverse().join('') : "No rounds logged yet.";
     }
@@ -187,7 +197,7 @@
         const winner = document.getElementById('winner').value;
         const amount = document.getElementById('amt').value;
 
-        if (!course || !amount) return alert("Fill out everything!");
+        if (!course || !amount) return alert("Please enter course and amount!");
 
         btn.innerText = "SAVING...";
         btn.disabled = true;
@@ -197,11 +207,11 @@
         try {
             await fetch(DB_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Necessary for Google Script posts
+                mode: 'no-cors', 
                 body: JSON.stringify(newRound)
             });
             
-            // Wait a second then reload to show new data
+            // Wait for Google Sheets to process
             setTimeout(() => {
                 loadData();
                 btn.innerText = "LOG ROUND";
@@ -211,11 +221,12 @@
             }, 1500);
 
         } catch (e) {
-            alert("Save failed. Check your internet.");
+            alert("Connection error. Try again.");
             btn.disabled = false;
         }
     }
 
+    // Initial load
     loadData();
 </script>
 
