@@ -2,114 +2,115 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Golf Bet Tracker</title>
-<style>
-    :root {
-        --sky-blue: #87CEEB;
-        --grass-green: #76c74d;
-        --fairway-dark: #5ea33d;
-    }
+    <style>
+        :root {
+            --sky-blue: #87CEEB;
+            --grass-green: #76c74d;
+            --fairway-dark: #5ea33d;
+        }
 
-    body {
-        font-family: 'Segoe UI', sans-serif;
-        /* Improved Background: Added a gradient "horizon" feel */
-        background: linear-gradient(to bottom, 
-            var(--sky-blue) 0%, 
-            #b0e2ff 35%, 
-            var(--grass-green) 35%, 
-            var(--fairway-dark) 100%);
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        /* This "padding-top" brings the characters down from the notch */
-        padding: 60px 20px 20px 20px; 
-        min-height: 100vh;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to bottom, 
+                var(--sky-blue) 0%, 
+                #b0e2ff 35%, 
+                var(--grass-green) 35%, 
+                var(--fairway-dark) 100%);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            /* Extra padding at top to move images down from the phone notch */
+            padding: 80px 20px 40px 20px; 
+            min-height: 100vh;
+            color: #333;
+        }
 
-    .container { width: 100%; max-width: 400px; text-align: center; }
+        .container { width: 100%; max-width: 400px; text-align: center; }
 
-    .player-row { 
-        display: flex; 
-        justify-content: space-around; 
-        margin-bottom: 30px;
-        /* Added a little breathing room between characters */
-        gap: 10px; 
-    }
-    
-    .player-card { 
-        width: 48%; 
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        position: relative; 
-    }
-    
-    .amount-bubble {
-        background: white;
-        border-radius: 50px; /* Rounder look */
-        padding: 10px 15px;
-        font-weight: 800;
-        font-size: 22px;
-        box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-        margin-bottom: 15px;
-        border: 2px solid #eee;
-    }
+        .player-row { 
+            display: flex; 
+            justify-content: space-around; 
+            margin-bottom: 40px;
+            gap: 15px; 
+        }
+        
+        .player-card { 
+            width: 48%; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative; 
+        }
+        
+        .amount-bubble {
+            background: white;
+            border-radius: 50px;
+            padding: 10px 5px;
+            font-weight: 900;
+            font-size: 24px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+            border: 2px solid #fff;
+        }
 
-    .avatar { 
-        width: 100%; 
-        border-radius: 20px; 
-        border: 5px solid white; 
-        display: block; 
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
+        .avatar { 
+            width: 100%; 
+            border-radius: 25px; 
+            border: 6px solid white; 
+            display: block; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            background: #eee;
+        }
 
-    /* Effects */
-    .winner { transform: scale(1.1); z-index: 2; }
-    .winner .avatar { border-color: gold; }
-    .loser { filter: grayscale(100%); opacity: 0.5; transform: scale(0.85); }
+        /* Status Effects */
+        .winner { transform: scale(1.15); z-index: 2; }
+        .winner .avatar { border-color: #FFD700; }
+        .loser { filter: grayscale(100%); opacity: 0.4; transform: scale(0.85); }
 
-    /* Form Card */
-    .card { 
-        background: rgba(255, 255, 255, 0.95); 
-        padding: 25px; 
-        border-radius: 25px; 
-        box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-        backdrop-filter: blur(5px);
-    }
-    
-    input, select, button {
-        width: 100%; padding: 14px; margin: 10px 0; border-radius: 12px;
-        border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;
-        -webkit-appearance: none; /* Makes it look better on iPhone */
-    }
+        /* Input Form */
+        .card { 
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 25px; 
+            border-radius: 30px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+        
+        input, select, button {
+            width: 100%; padding: 15px; margin: 10px 0; border-radius: 15px;
+            border: 1px solid #ddd; font-size: 16px; box-sizing: border-box;
+            outline: none;
+        }
 
-    button { 
-        background: #27ae60; 
-        color: white; 
-        border: none; 
-        font-weight: 800; 
-        cursor: pointer;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
+        button { 
+            background: #2ecc71; 
+            color: white; 
+            border: none; 
+            font-weight: 800; 
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
 
-    /* History List */
-    .history { 
-        margin-top: 25px; 
-        text-align: left; 
-        background: white; 
-        padding: 20px; 
-        border-radius: 20px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .history-item { 
-        border-bottom: 1px solid #f0f0f0; 
-        padding: 12px 0; 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center;
-    }
-    .history-item:last-child { border: none; }
-</style>
+        /* History */
+        .history { 
+            text-align: left; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .history h3 { margin: 0 0 15px 0; font-size: 18px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+        .history-item { 
+            border-bottom: 1px solid #f9f9f9; 
+            padding: 10px 0; 
+            display: flex; 
+            justify-content: space-between; 
+            font-size: 15px;
+        }
+        .loading-text { font-style: italic; color: #666; font-size: 14px; }
+    </style>
 </head>
 <body>
 
@@ -126,67 +127,96 @@
     </div>
 
     <div class="card">
-        <input type="text" id="course" placeholder="Course Name">
+        <input type="text" id="course" placeholder="What Course?">
         <select id="winner">
             <option value="brady">Brady Won</option>
             <option value="evan">Evan Won</option>
         </select>
         <input type="number" id="amt" placeholder="Bet Amount ($)">
-        <button onclick="logRound()">LOG ROUND</button>
+        <button id="logBtn" onclick="logRound()">LOG ROUND</button>
     </div>
 
-    <div class="history" id="history-box">
-        <strong>History</strong>
-        <div id="history-list"></div>
+    <div class="history">
+        <h3>Season History</h3>
+        <div id="history-list"><span class="loading-text">Loading scores...</span></div>
     </div>
 </div>
 
 <script>
-    let rounds = JSON.parse(localStorage.getItem('golfHistory')) || [];
+    const DB_URL = "https://script.google.com/macros/s/AKfycbya8TWPdAnj1C2KOF8-mRdvB8DlpRIESP1972L4MySQTD7mD_s1yv_-Do-P4fbwSyMA/exec";
+    let rounds = [];
+
+    async function loadData() {
+        try {
+            const response = await fetch(DB_URL);
+            rounds = await response.json();
+            updateUI();
+        } catch (e) {
+            console.error("Error loading data", e);
+            document.getElementById('history-list').innerText = "Failed to load history.";
+        }
+    }
 
     function updateUI() {
         let bradyNet = 0;
         rounds.forEach(r => {
-            if(r.winner === 'brady') bradyNet += r.amount;
-            else bradyNet -= r.amount;
+            const val = parseFloat(r.amount);
+            if(r.winner.toLowerCase() === 'brady') bradyNet += val;
+            else bradyNet -= val;
         });
 
         let evanNet = -bradyNet;
 
-        // Update Numbers
         document.getElementById('brady-val').innerText = (bradyNet >= 0 ? '+$' : '-$') + Math.abs(bradyNet);
         document.getElementById('evan-val').innerText = (evanNet >= 0 ? '+$' : '-$') + Math.abs(evanNet);
 
-        // Update Images (The one with more money stays in color)
         document.getElementById('brady-card').className = bradyNet >= evanNet ? 'player-card winner' : 'player-card loser';
         document.getElementById('evan-card').className = evanNet > bradyNet ? 'player-card winner' : 'player-card loser';
 
-        // Update History List
-        document.getElementById('history-list').innerHTML = rounds.map(r => `
+        document.getElementById('history-list').innerHTML = rounds.length ? rounds.map(r => `
             <div class="history-item">
                 <span>${r.course}</span>
-                <span style="color:${r.winner === 'brady' ? 'green' : 'red'}">${r.winner.toUpperCase()} +$${r.amount}</span>
+                <b style="color:${r.winner.toLowerCase()==='brady'?'#27ae60':'#e74c3c'}">${r.winner.toUpperCase()} +$${r.amount}</b>
             </div>
-        `).reverse().join('');
+        `).reverse().join('') : "No rounds logged yet.";
     }
 
-    function logRound() {
+    async function logRound() {
+        const btn = document.getElementById('logBtn');
         const course = document.getElementById('course').value;
         const winner = document.getElementById('winner').value;
-        const amount = parseInt(document.getElementById('amt').value);
+        const amount = document.getElementById('amt').value;
 
-        if (!course || !amount) return alert("Fill out the course and amount!");
+        if (!course || !amount) return alert("Fill out everything!");
 
-        rounds.push({ course, winner, amount });
-        localStorage.setItem('golfHistory', JSON.stringify(rounds));
-        
-        updateUI();
-        document.getElementById('course').value = '';
-        document.getElementById('amt').value = '';
+        btn.innerText = "SAVING...";
+        btn.disabled = true;
+
+        const newRound = { course, winner, amount };
+
+        try {
+            await fetch(DB_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Necessary for Google Script posts
+                body: JSON.stringify(newRound)
+            });
+            
+            // Wait a second then reload to show new data
+            setTimeout(() => {
+                loadData();
+                btn.innerText = "LOG ROUND";
+                btn.disabled = false;
+                document.getElementById('course').value = '';
+                document.getElementById('amt').value = '';
+            }, 1500);
+
+        } catch (e) {
+            alert("Save failed. Check your internet.");
+            btn.disabled = false;
+        }
     }
 
-    // Run on load
-    updateUI();
+    loadData();
 </script>
 
 </body>
